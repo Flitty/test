@@ -31,6 +31,7 @@ class UpdateUserProfileRequest extends FormRequest
     public function rules()
     {
         return [
+
             'email' => [
                 'nullable',
                 Rule::unique('users')->ignore(Auth::id()),

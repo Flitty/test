@@ -54,8 +54,7 @@ class AuthController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
         DB::commit();
-
-        return app('auth-service')->respondWithToken($token);
+        return response()->json(['message' => 'User profile data', 'user' => $user, 'access_token' => $token]);
     }
 
     /**

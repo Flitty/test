@@ -32,10 +32,8 @@ class AuthService
      */
     public function prepareUserData(array $userData, $avatar = null) : array
     {
-        if ($userData['password']) {
+        if (isset($userData['password'])) {
             $userData['password'] = bcrypt($userData['password']);
-        } else {
-            unset($userData['password']);
         }
         if ($avatar instanceof UploadedFile) {
             $avatar = $this->storeAvatar($avatar);

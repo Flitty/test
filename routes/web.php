@@ -11,6 +11,5 @@
 |
 */
 
-Route::get('/{any}', function () {
-    return view('welcome');
-})->where('any', '.*');
+Route::get('/dataset.js', 'IndexController@dataset')->name('dataset');
+Route::get('/{any}', 'IndexController@index')->where(['any' => '.*']);

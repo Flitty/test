@@ -5,6 +5,13 @@
  * building robust, powerful web applications using Vue and Laravel.
  */
 
+import router from './router';
+import store                    from './store';
+import App from './components/App.vue';
+import {get, del, post, put}    from './helpers/api'
+import {handleErrors}       from './helpers/errors';
+import Notify                   from "vue2-notify"
+
 require('./bootstrap');
 
 window.Vue = require('vue');
@@ -15,8 +22,19 @@ window.Vue = require('vue');
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-Vue.component('example-component', require('./components/ExampleComponent.vue'));
+// Vue.component('example-component', require('./components/ExampleComponent.vue'));
+
+window.Vue.prototype.$get = get;
+window.Vue.prototype.$del = del;
+window.Vue.prototype.$post = post;
+window.Vue.prototype.$put = put;
+window.Vue.prototype.$handleErrors = handleErrors;
+window.Vue.prototype.$notify = Notify;
 
 const app = new Vue({
-    el: '#app'
+    el: '#app',
+    store,
+    template: '<app></app>',
+    components: {App},
+    router
 });

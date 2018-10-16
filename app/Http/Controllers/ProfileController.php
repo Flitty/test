@@ -47,6 +47,6 @@ class ProfileController extends Controller
         $userData = app('auth-service')->prepareUserData($userDataFromRequest, $image);
         app('profile-service')->update($userData, Auth::id());
         $token = auth()->refresh();
-        return app('auth-service')->respondWithToken($token);
+        return response()->json(['message' => 'User profile data', 'user' => Auth::user(), 'access_token' => $token]);
     }
 }
