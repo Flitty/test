@@ -31,7 +31,7 @@ Route::group(['middleware' => 'api', 'as' => 'api'], function () {
 
         Route::group(['prefix' => 'figure'], function() {
             Route::get('index', ['as' => '.index', 'uses' => 'FigureController@index']);
-            Route::get('validate-point', ['as' => '.validate-point', 'uses' => 'FigureController@validatePoint']);
+            Route::post('validate-point', ['as' => '.validate-point', 'uses' => 'FigureController@validatePoint']);
             Route::post('store', ['as' => '.store', 'uses' => 'FigureController@store']);
             Route::delete('delete/{figureId}', ['as' => '.delete', 'uses' => 'FigureController@delete']);
             Route::put('update/{figureId}', ['as' => '.update', 'uses' => 'FigureController@update']);

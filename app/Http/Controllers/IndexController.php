@@ -32,6 +32,7 @@ class IndexController extends Controller
      */
     public function dataset() : Response
     {
+        Cache::forget('global_data');
         $data = Cache::remember('global_data', 60, function() {
             return [
                 'config' => [
@@ -39,13 +40,8 @@ class IndexController extends Controller
                     'env'               => config('app.env'),
                     'debug'             => config('app.debug'),
                     'api' => [
-                        'pusher' => [
-                            'key'       => env('PUSHER_APP_KEY', ''),
-                            'cluster'   => env('PUSHER_CLUSTER', ''),
-                            'auth_url'  => env('PUSHER_AUTH_URL', ''),
-                        ],
-                        'sentry' => [
-                            'dns'       => env('SENTRY_FRONTEND_DSN', '')
+                        'googleMaps' => [
+                            'apiKey' => env('GOOGLE_MAPS_API_KEY')
                         ]
                     ]
                 ],

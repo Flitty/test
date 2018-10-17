@@ -5,12 +5,12 @@
  * building robust, powerful web applications using Vue and Laravel.
  */
 
-import router from './router';
-import store                    from './store';
-import App from './components/App.vue';
-import {get, del, post, put}    from './helpers/api'
-import {handleErrors}       from './helpers/errors';
-import Notify                   from "vue2-notify"
+import router                from './router';
+import store                 from './store';
+import App                   from './components/App.vue';
+import {get, del, post, put} from './helpers/api'
+import {handleErrors}        from './helpers/errors';
+import Notify                from "vue2-notify"
 
 require('./bootstrap');
 
@@ -29,7 +29,8 @@ window.Vue.prototype.$del = del;
 window.Vue.prototype.$post = post;
 window.Vue.prototype.$put = put;
 window.Vue.prototype.$handleErrors = handleErrors;
-window.Vue.prototype.$notify = Notify;
+
+window.Vue.use(Notify);
 
 const app = new Vue({
     el: '#app',

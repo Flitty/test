@@ -3,8 +3,13 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
-class CreateFigureRequest extends FormRequest
+/**
+ * Class ValidatePointRequest
+ * @package App\Http\Requests
+ */
+class ValidatePointRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -13,7 +18,7 @@ class CreateFigureRequest extends FormRequest
      */
     public function authorize()
     {
-        return \Auth::check();
+        return Auth::check();
     }
 
     /**
@@ -24,9 +29,7 @@ class CreateFigureRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string',
-            'perimeter' => 'nullable',
-//            'points' => 'required|min:3',
+            'points' => 'required|min:4',
             'points.*.latitude' => 'required',
             'points.*.longitude' => 'required',
         ];

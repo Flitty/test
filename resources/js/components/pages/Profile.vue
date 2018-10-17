@@ -166,8 +166,6 @@
                         profileData.append(field, value);
                     }
                 }
-                console.log(profileData);
-                console.log(this.form);
                 profileData.append('_method', 'put');
                 this.$post('/api/profile/update', profileData)
                     .then((res) => {

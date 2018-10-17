@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateFigureRequest;
 use App\Http\Requests\FigureSortingRequest;
 use App\Http\Requests\UpdateFigureRequest;
+use App\Http\Requests\ValidatePointRequest;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
  */
 class FigureController extends Controller
 {
+
     /**
      * Get paginated user figures.
      *
@@ -44,6 +46,36 @@ class FigureController extends Controller
         $attributes['user_id'] = \Auth::id();
         $createdFigure = app('figure-service')->create($attributes, $request->get('points'));
         return response()->json(['message' => 'Figure has been created successfully', 'figure' => $createdFigure]);
+    }
+
+    /**
+     * Validate the point user has been set
+     *
+     * @param ValidatePointRequest $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function validatePoint(ValidatePointRequest $request)
+    {
+        $points = $request->get('points');
+        $newPoint = array_pop($points);
+        $validPoints = $points;
+        $canAddThePoint = app('figure-service')->validatePoint($validPoints, $newPoint);
+        $points = array_map(function($item) {
+            $item['validated'] = true;
+            return $item;
+        }, $request->get('points'));
+        $not = !$canAddThePoint ? 'not ' : '';
+        $message = 'The point has ' . $not . 'been added successfully';
+        return response()->json(
+            [
+                'message' => $message,
+                'isValid' => $canAddThePoint,
+                'points' => $points,
+                'perimeter' => app('figure-service')->measureFigureDistance($validPoints)
+            ]
+        );
+
     }
 
     /**

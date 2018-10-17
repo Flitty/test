@@ -20,7 +20,7 @@ class CreateFiguresTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('user_id');
             $table->string('name');
-            $table->float('perimeter');
+            $table->string('perimeter');
             $table->timestamps();
             $table->foreign('user_id')->on('users')->references('id')->onDelete('cascade');
         });

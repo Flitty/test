@@ -30,15 +30,7 @@
                                 this.$store.dispatch('setUserData', res.data.user);
                             }
                         }).catch((err) => {
-//                    if (err.response.status === 422) {
-//                        if (err.response.data.errors) {
-//                            handleErrors(err.response.data.errors, this.errors, self, true);
-//                        } else {
-//                            self.$notify.error(err.response.data.message);
-//                        }
-//                    } else {
-//                        self.$notify.error(err.response.data.message);
-//                    }
+                            this.$handleErrors(err);
 
                         this.isProcessing = false
                     });
