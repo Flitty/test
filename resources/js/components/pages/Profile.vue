@@ -162,7 +162,12 @@
                 let profileData = new FormData();
                 for (let field in this.form) {
                     let value = this.form[field].temp;
-                    if (value && value !== undefined) {
+
+                    if (field === 'avatar_file' || field === 'password') {
+                        if (value && value !== undefined) {
+                            profileData.append(field, value);
+                        }
+                    } else {
                         profileData.append(field, value);
                     }
                 }
@@ -177,10 +182,24 @@
                             for (let key in this.form) {
                                 this.form[key].current = user[key];
                                 this.form[key].temp = user[key];
+                                this.form[key].error = false;
                             }
+                            this.$notify(res.data.message);
+
                         }
                     }).catch((err) => {
-                        this.$handleErrors(err, this);
+                    if (err.response.status === 422) {
+                        let errors = err.response.data.errors;
+                        if (errors) {
+                            for(let field in errors) {
+                                this.form[field].error = errors[field];
+                            }
+                        } else {
+                            this.$notify(err.response.data.message, 'error');
+                        }
+                    } else {
+                        this.$notify(err.response.data.message, 'error');
+                    }
                     });
             },
             onFileChange(e) {
@@ -191,7 +210,6 @@
                 this.createImage(files[0]);
             },
             createImage(file) {
-                let image = new Image();
                 let reader = new FileReader();
                 let vm = this;
 
@@ -214,22 +232,11 @@
 </script>
 <style scoped="">
     .profile-wrapper {
-        width: 550px;
-        display: block;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translateX(-50%) translateY(-50%);
         padding: 25px 50px;
         border: 1px solid #000;
     }
     .form-group {
         margin-bottom: 15px;
-    }
-    .password-wrapper {
-        position: relative;
-        width: 100%;
-        display: inline-block;
     }
     .profile-container button {
         background-color: transparent;

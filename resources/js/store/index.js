@@ -3,7 +3,6 @@ import Vuex         from 'vuex'
 
 /*----------   Global   ----------*/
 import actions      from './globals/actions'
-// import getters      from './globals/getters'
 import state        from './globals/state'
 import mutations    from './globals/mutations'
 

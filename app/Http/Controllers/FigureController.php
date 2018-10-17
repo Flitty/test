@@ -60,13 +60,27 @@ class FigureController extends Controller
         $points = $request->get('points');
         $newPoint = array_pop($points);
         $validPoints = $points;
-        $canAddThePoint = app('figure-service')->validatePoint($validPoints, $newPoint);
-        $points = array_map(function($item) {
-            $item['validated'] = true;
-            return $item;
-        }, $request->get('points'));
-        $not = !$canAddThePoint ? 'not ' : '';
-        $message = 'The point has ' . $not . 'been added successfully';
+
+        $alreadyExist = array_filter(
+            $validPoints,
+            function($item) use ($newPoint) {
+                return $newPoint['latitude'] == $item['latitude'] && $newPoint['longitude'] == $item['longitude'];
+            }
+        );
+        if (!count($alreadyExist)) {
+            $canAddThePoint = count($points) > 3 ? app('figure-service')->validatePoint($validPoints, $newPoint) : true;
+            $not = !$canAddThePoint ? 'not ' : '';
+            $message = 'The point has ' . $not . 'been added successfully';
+        } else {
+            $canAddThePoint = false;
+            $message = 'The point already exists';
+        }
+        if ($canAddThePoint) {
+            $points = array_map(function ($item) {
+                $item['validated'] = true;
+                return $item;
+            }, $request->get('points'));
+        }
         return response()->json(
             [
                 'message' => $message,

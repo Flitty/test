@@ -37,15 +37,15 @@
                         <span class="select-form-item">
                             <label>Gender</label>
                             <select v-model="form.gender.temp">
-                                <option value="0">Woman</option>
-                                <option value="1">Man</option>
+                                <option value="0" >Woman</option>
+                                <option value="1" >Man</option>
                             </select>
                             <error-tip :error="form.gender.error"></error-tip>
                         </span>
                         <span class="select-form-item">
                             <label>Do you want to receive news messages?</label>
                             <select v-model="form.news_mailing.temp">
-                                <option value="0">No</option>
+                                <option value="0" >No</option>
                                 <option value="1">Yes</option>
                             </select>
                             <error-tip :error="form.news_mailing.error"></error-tip>
@@ -114,12 +114,12 @@
                     },
                     gender: {
                         current: '',
-                        temp: '',
+                        temp: 0,
                         error: false
                     },
                     news_mailing: {
                         current: '',
-                        temp: '',
+                        temp: 0,
                         error: false
                     },
                     biography: {
@@ -146,16 +146,25 @@
                 }
                 this.$post('/api/auth/register', profileData)
                     .then((res) => {
-                        if (res.data) {
                             this.$store.dispatch('setToken', res.data.access_token);
                             let user = res.data.user;
 
                             this.$store.dispatch('setUserData', user);
                             this.$routes.push({name: 'home'});
-                        }
                     }).catch((err) => {
-                    this.$handleErrors(err, this);
-                });
+                        if (err.response.status === 422) {
+                            let errors = err.response.data.errors;
+                            if (errors) {
+                                for(let field in errors) {
+                                    this.form[field].error = errors[field];
+                                }
+                            } else {
+                                this.$notify(err.response.data.message, 'error');
+                            }
+                        } else {
+                            this.$notify(err.response.data.message, 'error');
+                        }
+                    });
             },
             onFileChange(e) {
                 let files = e.target.files || e.dataTransfer.files;
@@ -185,15 +194,11 @@
 </script>
 
 <style scoped>
-    .register-wrapper {
+    .register-wrapper {    display: flex;
         width: 550px;
-        display: block;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translateX(-50%) translateY(-50%);
         padding: 25px 50px;
         border: 1px solid #000;
+        margin: 4% auto;
     }
     .form-group {
         margin-bottom: 15px;

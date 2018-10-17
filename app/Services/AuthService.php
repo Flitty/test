@@ -32,7 +32,7 @@ class AuthService
      */
     public function prepareUserData(array $userData, $avatar = null) : array
     {
-        if (isset($userData['password'])) {
+        if (isset($userData['password']) && $userData['password']) {
             $userData['password'] = bcrypt($userData['password']);
         }
         if ($avatar instanceof UploadedFile) {

@@ -1,21 +1,14 @@
 <template>
     <div>
-        <!--<top-menu></top-menu>-->
         <router-view name="user"></router-view>
         <router-view name="any"></router-view>
         <router-view v-if="guest" name="guest"></router-view>
-
-        <!--<modal-lightbox></modal-lightbox>-->
     </div>
 </template>
 
 <script>
     import {interceptors}       from '../helpers/api';
-    import TopMenu              from './parts/TopMenu.vue';
-//    import authMixin            from '../mixins/authMixin';
-//
-//    import FormWrapper          from './partcials/FormWrapper.vue';
-//    import ModalLightbox        from './partcials/ModalLightbox/ModalLightbox.vue';
+    import AppHelper            from '../helpers/app';
 
     export default {
         data(){
@@ -49,11 +42,13 @@
                 }
 
                 if (err.response.status === 401) {
-                    this.logout(true);
+                    this.$store.dispatch('logoutUser');
+                    this.$router.push({name: 'login'});
+                    this.$notify('You are Unauthorized', 'error');
                 }
 
                 if (err.response.status === 500) {
-                    this.$notify.error('Something went wrong');
+                    this.$notify('Something went wrong', 'error');
                 }
 
                 if (err.response.status === 404) {

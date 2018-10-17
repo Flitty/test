@@ -29,9 +29,9 @@ class ValidatePointRequest extends FormRequest
     public function rules()
     {
         return [
-            'points' => 'required|min:4',
-            'points.*.latitude' => 'required',
-            'points.*.longitude' => 'required',
+            'points' => 'required|min:1',
+            'points.*.latitude' => 'required|numeric|max:90|min:-90',
+            'points.*.longitude' => 'required|numeric|max:180|min:-180',
         ];
     }
 }

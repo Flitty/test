@@ -8,6 +8,9 @@
                 <router-link to="/calculations">
                     <a>Calculations</a>
                 </router-link>
+                <router-link to="/figures">
+                    <a>Figures</a>
+                </router-link>
 
                 <router-link to="/profile">
                     <a>Profile</a>
@@ -16,10 +19,10 @@
                     {{ $store.state.user_name }}
                     <img id="avatar-image" :src="$store.state.user_avatar">
                 </span>
-                <a @click="logout">logout</a>
+                <a class="logout-button" @click="logout">logout</a>
             </div>
         </nav>
-        <div class="welcome flex-center position-ref full-height">
+        <div class="welcome flex-center position-ref">
             <div class="content">
                 <div class="title m-b-md"  v-if="this.$route.name == 'home'">
                     Welcome back, {{ $store.state.user_name }}!
@@ -47,36 +50,25 @@
         },
         mounted() {
             this.getProfile();
-
         },
         methods: {
+            logout: function() {
+                this.$store.dispatch('logoutUser');
+                this.$router.push({name: 'login'});
+                this.$notify('You are Unauthorized', 'error');
+            },
             getProfile: function () {
                 this.$store.dispatch('setUserData');
-                if (!this.$store.state.user_name || !this.$store.state.user_avatar) {
-                    this.$get('/api/profile')
-                        .then((res) => {
-                            if (res.data) {
-                                this.$store.dispatch('setUserData', res.data.user);
-                            }
-                        }).catch((err) => {
-//                    if (err.response.status === 422) {
-//                        if (err.response.data.errors) {
-//                            handleErrors(err.response.data.errors, this.errors, self, true);
-//                        } else {
-//                            self.$notify.error(err.response.data.message);
-//                        }
-//                    } else {
-//                        self.$notify.error(err.response.data.message);
-//                    }
-
-                        this.isProcessing = false
-                    });
-                }
-            },
-            logout() {
-                localStorage.clear();
-                this.$router.push({name: 'login'});
-                return true;
+                this.$get('/api/profile')
+                    .then((res) => {
+                        if (res.data) {
+                            this.$store.dispatch('setUserData', res.data.user);
+                        }
+                    }).catch((err) => {
+                    if (err.response.data && err.response.data.message) {
+                        this.$notify(err.response.data.message);
+                    }
+                });
             }
         }
     }
@@ -131,5 +123,9 @@
         margin-left: 10px;
         max-width: 50px;
         max-heugnt: 50px;
+    }
+    .logout-button {
+        cursor: pointer;
+        text-decoration: underline!important;
     }
 </style>

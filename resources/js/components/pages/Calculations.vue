@@ -5,7 +5,7 @@
             <error-tip :error="figureNameError"></error-tip>
             <h2>Add 3 or more points to count the perimeter</h2>
             <small v-if="perimeter">Current perimeter value - {{ perimeter }}</small>
-            <div v-for="(value, index) in this.points">
+            <div v-for="(value, index) in this.points" class="point-body">
                 <h3>Point #{{ index }}</h3>
                 <button v-if="!points[index].validated" class="delete-point" @click="deletePoint(index)">X</button>
                 <label :for="'latitude-' + index">Latitude</label>
@@ -43,11 +43,6 @@
         },
         methods: {
             validate: function() {
-                let indexOfLastElement = this.points.length - 1;
-                if (indexOfLastElement < 3) {
-                    this.points[indexOfLastElement].validated = true;
-                    this.isAdditional = false;
-                } else {
                     this.$post('api/figure/validate-point', {points: this.points})
                         .then((res) => {
                         if (res.data.isValid) {
@@ -60,10 +55,14 @@
 
                         }
                         }).catch((err) => {
-
-                        this.$handleErrors(err, this);
+                        if (err.response.status === 422 && err.response.data.errors) {
+                            for(let field in err.response.data.errors) {
+                                this.$notify(err.response.data.errors[field], 'error');
+                            }
+                        } else {
+                            this.$notify(err.response.message, 'error');
+                        }
                     });
-                }
             },
             submit: function() {
                 if (this.points.length < 3) {
@@ -73,7 +72,9 @@
                     let figureData = {
                         perimeter: this.perimeter,
                         name: this.figureName,
-                        points: this.points
+                        points: this.points.filter(function(item) {
+                            return item.validated;
+                        })
                     };
                     this.$post('api/figure/store', figureData)
                         .then((res) => {
@@ -83,7 +84,8 @@
                             }
                         }).catch((err) => {
                         if (err.response.status === 422 && err.response.data.errors) {
-                            this.figureNameError = err.response.data.errors.name
+                            this.figureNameError = err.response.data.errors.name;
+                            this.$notify(err.response.data.message, 'success');
                         } else {
                             this.$notify(err.response.message, 'success');
                         }
@@ -96,8 +98,6 @@
                     validated: false,
                     latitude: null,
                     longitude: null,
-//                    latitude: 0.0,
-//                    longitude: 0.0
                 });
             },
             deletePoint: function(index) {
@@ -108,6 +108,7 @@
             },
             refreshData: function () {
                 this.figureName = '';
+                this.figureNameError = false;
                 this.points = [
                     {
                         validated: false,
@@ -146,5 +147,8 @@
         color: #000;
         width: 100%;
         border-bottom: 1px solid #000;
+    }
+    .point-body input {
+        width: 30%;
     }
 </style>

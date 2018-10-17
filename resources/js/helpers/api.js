@@ -76,7 +76,6 @@ export function put(url, payload) {
         data: payload,
         headers: {
             'X-Requested-With': 'XMLHttpRequest',
-            // 'Content-Type': 'multipart/form-data',
             'Content-Type': 'application/x-www-form-urlencoded',
             'Authorization': `Bearer ${store.state.api_token}`
         }

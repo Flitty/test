@@ -11,6 +11,7 @@ namespace App\Services;
 use App\Models\Figure;
 use App\Models\Point;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
@@ -77,9 +78,9 @@ class FigureService
      *
      * @param int    $perPage
      *
-     * @return LengthAwarePaginator
+     * @return LengthAwarePaginator|Collection
      */
-    public function getFiguresWithSorting(int $userId, $sortType = null, $orderBy = null, int $perPage = 10) : LengthAwarePaginator
+    public function getFiguresWithSorting(int $userId, $sortType = null, $orderBy = null, $perPage = 10)
     {
         $sortType = $sortType ?? 'asc';
         $orderBy = $orderBy ?? 'id';
@@ -87,7 +88,8 @@ class FigureService
             $query->orderBy('order');
         }])->orderBy($orderBy, $sortType)
             ->whereUserId($userId)
-            ->paginate($perPage);
+            ->get();
+//            ->paginate($perPage);
     }
 
     /**
@@ -120,7 +122,7 @@ class FigureService
             }
             $previousPoint = $point;
         }
-        return array_sum($distances);
+        return round(array_sum($distances), 2);
     }
 
     /**
@@ -288,7 +290,7 @@ class FigureService
      */
     private function prepareLineFormat(array $firstPoint, array $secondPoint) : array
     {
-        [
+        return [
             'first' => [
                 'x' => $firstPoint['latitude'],
                 'y' => $firstPoint['longitude']

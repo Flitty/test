@@ -8,6 +8,7 @@ import NotFound             from '../components/pages/NotFound.vue';
 import Home                 from '../components/Home.vue';
 import Profile              from '../components/pages/Profile.vue';
 import Calculations         from '../components/pages/Calculations.vue';
+import Figures         from '../components/pages/Figures.vue';
 
 Vue.use(VueRouter);
 
@@ -26,7 +27,8 @@ const router = new VueRouter({
             },
             children: [
                 {path: 'profile',      component: Profile,      name: 'profile'},
-                {path: 'calculations', component: Calculations, name: 'calculations'}
+                {path: 'calculations', component: Calculations, name: 'calculations'},
+                {path: 'figures',      component: Figures,      name: 'figures'}
             ]
         },
         {path: '/login',     components: {guest: Login},    name: 'login', meta: {requiresGuest: true}},

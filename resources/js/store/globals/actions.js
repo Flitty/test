@@ -15,5 +15,13 @@ export default {
 
         commit('setUserAvatar', avatar);
         commit('setUserName', name);
+    },
+    logoutUser({ commit })
+    {
+        commit('initialize', null);
+        commit('setUserAvatar', null);
+        commit('setUserAvatar', null);
+        commit('setUserName', null);
+
     }
 }

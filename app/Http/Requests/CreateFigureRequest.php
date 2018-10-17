@@ -26,9 +26,9 @@ class CreateFigureRequest extends FormRequest
         return [
             'name' => 'required|string',
             'perimeter' => 'nullable',
-//            'points' => 'required|min:3',
-            'points.*.latitude' => 'required',
-            'points.*.longitude' => 'required',
+            'points' => 'required|min:3',
+            'points.*.latitude' => 'required|numeric|max:90|min:-90',
+            'points.*.longitude' => 'required|numeric|max:180|min:-180',
         ];
     }
 }
