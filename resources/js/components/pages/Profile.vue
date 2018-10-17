@@ -35,7 +35,8 @@
                         <error-tip :error="form.birthday.error"></error-tip>
                         <span class="select-form-item">
                             <label>Gender</label>
-                            <select v-model="form.gender.temp">
+                            <select v-model="form.gender.temp"  @input="updateSelectValue($event.target.value, 'gender')">
+                                <option value="null">Nothing Selected</option>
                                 <option value="0">Woman</option>
                                 <option value="1">Man</option>
                             </select>
@@ -43,7 +44,8 @@
                         </span>
                         <span class="select-form-item">
                             <label>Do you want to receive news messages?</label>
-                            <select v-model="form.news_mailing.temp">
+                            <select v-model="form.news_mailing.temp" @input="updateSelectValue($event.target.value, 'news_mailing')">
+                                <option value="null">Nothing Selected</option>
                                 <option value="0">No</option>
                                 <option value="1">Yes</option>
                             </select>
@@ -87,7 +89,7 @@
                     },
                     password: {
                         current: '',
-                        temp: null,
+                        temp: '',
                         error: false
                     },
                     email: {
@@ -104,7 +106,7 @@
                         withFile: false,
                         preview: '',
                         current: '',
-                        temp: null,
+                        temp: '',
                         error: false
                     },
                     birthday: {
@@ -127,7 +129,14 @@
                         temp: '',
                         error: false
                     },
-                }
+                },
+                skipIfNullFields: [
+                    'gender',
+                    'birthday',
+                    'news_mailing',
+                    'password',
+                    'avatar_file'
+                ]
             }
         },
         components: {
@@ -145,14 +154,7 @@
                 this.$get('/api/profile')
                     .then((res) => {
                         if (res.data) {
-                            let user = res.data.user;
-                            for (let key in this.form) {
-                                this.form[key].current = user[key];
-                                this.form[key].temp = user[key];
-                            }
-                            this.form.avatar_file.temp = null;
-                            this.form.password.temp = null;
-
+                            this.setUserData(res.data.user);
                         }
                     }).catch((err) => {
                     this.$handleErrors(err, this);
@@ -162,12 +164,13 @@
                 let profileData = new FormData();
                 for (let field in this.form) {
                     let value = this.form[field].temp;
-
-                    if (field === 'avatar_file' || field === 'password') {
+                    value = value === 'null' ? '' : value;
+                    if (this.inArray(field, this.skipIfNullFields)) {
                         if (value && value !== undefined) {
                             profileData.append(field, value);
                         }
                     } else {
+                        console.log(field, value);
                         profileData.append(field, value);
                     }
                 }
@@ -179,11 +182,7 @@
                             let user = res.data.user;
 
                             this.$store.dispatch('setUserData', user);
-                            for (let key in this.form) {
-                                this.form[key].current = user[key];
-                                this.form[key].temp = user[key];
-                                this.form[key].error = false;
-                            }
+                            this.setUserData(user);
                             this.$notify(res.data.message);
 
                         }
@@ -223,6 +222,41 @@
                 this.form.avatar_file.preview = '';
                 this.form.avatar_file.withFile = false;
                 this.form.avatar_file.temp = null
+            },
+            inArray(needle, haystack) {
+                for (let i = 0; i < haystack.length; i++) {
+                    if (haystack[i] === needle) return true;
+                }
+                return false;
+            },
+            updateSelectValue(value, field) {
+                this.form[field].temp = value;
+            },
+            setUserData(userData) {
+                this.form.name.temp = userData.name;
+                this.form.password.temp = '';
+                this.form.email.temp = userData.email;
+                this.form.avatar.temp = userData.avatar;
+                this.form.birthday.temp = userData.birthday;
+                this.form.gender.temp = +userData.gender;
+                this.form.news_mailing.temp = +userData.news_mailing;
+                this.form.biography.temp = userData.biography;
+                this.form.name.current = userData.name;
+                this.form.password.current = '';
+                this.form.email.current = userData.email;
+                this.form.avatar.current = userData.avatar;
+                this.form.birthday.current = userData.birthday;
+                this.form.gender.current = +userData.gender;
+                this.form.news_mailing.current = +userData.news_mailing;
+                this.form.biography.current = userData.biography;
+                this.form.name.error = false;
+                this.form.password.error = false;
+                this.form.email.error = false;
+                this.form.avatar.error = false;
+                this.form.birthday.error = false;
+                this.form.gender.error = false;
+                this.form.news_mailing.error = false;
+                this.form.biography.error = false;
             },
         },
         mounted() {

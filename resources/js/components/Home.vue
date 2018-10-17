@@ -17,7 +17,7 @@
                 </router-link>
                 <span>
                     {{ $store.state.user_name }}
-                    <img id="avatar-image" :src="$store.state.user_avatar">
+                    <img v-if="$store.state.user_avatar !== 'null'" id="avatar-image" :src="$store.state.user_avatar">
                 </span>
                 <a class="logout-button" @click="logout">logout</a>
             </div>
@@ -37,14 +37,6 @@
 <script>
 
     export default {
-        data() {
-            return {
-                user: {
-                    name: '',
-                    avatar: ''
-                }
-            }
-        },
         computed: {
 
         },

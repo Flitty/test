@@ -56,7 +56,6 @@
                             <error-tip :error="form.biography.error"></error-tip>
                         </span>
 
-                        <!--<error-tip :error="errors.password"></error-tip>-->
                         <button type="submit" class="btn btn-default form-btn">Register</button>
                     </form>
                 </div>
@@ -150,7 +149,7 @@
                             let user = res.data.user;
 
                             this.$store.dispatch('setUserData', user);
-                            this.$routes.push({name: 'home'});
+                            this.$router.push({name: 'home'})
                     }).catch((err) => {
                         if (err.response.status === 422) {
                             let errors = err.response.data.errors;
@@ -194,7 +193,8 @@
 </script>
 
 <style scoped>
-    .register-wrapper {    display: flex;
+    .register-wrapper {
+        display: flex;
         width: 550px;
         padding: 25px 50px;
         border: 1px solid #000;

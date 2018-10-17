@@ -20,7 +20,6 @@
             }
         },
         components: {
-            TopMenu
         },
         computed: {
             guest(){

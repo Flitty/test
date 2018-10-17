@@ -34,6 +34,8 @@ class AuthService
     {
         if (isset($userData['password']) && $userData['password']) {
             $userData['password'] = bcrypt($userData['password']);
+        } else {
+            unset($userData['password']);
         }
         if ($avatar instanceof UploadedFile) {
             $avatar = $this->storeAvatar($avatar);

@@ -33,20 +33,18 @@ class ProfileController extends Controller
     public function update(UpdateUserProfileRequest $request) : JsonResponse
     {
         $image = $request->file('avatar_file') ? $request->file('avatar_file') : $request->get('avatar');
-        $userDataFromRequest = $request->only(
-            [
-                'email',
-                'name',
-                'password',
-                'birthday',
-                'gender',
-                'news_mailing',
-                'biography',
-            ]
-        );
+        $userDataFromRequest = [
+            'email' => $request->get('email'),
+            'name' => $request->get('name'),
+            'password' => $request->get('password'),
+            'birthday' => $request->get('birthday'),
+            'gender' => $request->get('gender'),
+            'news_mailing' => $request->get('news_mailing'),
+            'biography' => $request->get('biography'),
+        ];
         $userData = app('auth-service')->prepareUserData($userDataFromRequest, $image);
-        app('profile-service')->update($userData, Auth::id());
+        $user = app('profile-service')->update($userData, Auth::id());
         $token = auth()->refresh();
-        return response()->json(['message' => 'User profile data has been updated', 'user' => Auth::user(), 'access_token' => $token]);
+        return response()->json(['message' => 'User profile data has been updated', 'user' => $user, 'access_token' => $token]);
     }
 }
